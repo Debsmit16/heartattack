@@ -4,9 +4,15 @@ from urllib import request
 from django.conf import settings
 from django.shortcuts import render
 
-model=os.path.join(settings.BASE_DIR, 'dtc.pkl')
-with open(model, 'rb') as file:
-    model=pickle.load(file)
+# Load model with error handling
+model = None
+try:
+    model_path = os.path.join(settings.BASE_DIR, 'dtc.pkl')
+    with open(model_path, 'rb') as file:
+        model = pickle.load(file)
+except Exception as e:
+    print(f"Warning: Could not load ML model: {e}")
+    model = None
 
 def home(request):
     pred=None
@@ -27,9 +33,13 @@ def home(request):
         print("Glucose:", glucose)
         print("Troponin:", trop)
 
-        cust_env=[[age, gend, impul, pressure_high, pressure_low, glucose, trop]]
-        pred=model.predict(cust_env)
-        print("Prediction:", pred)
+        if model is not None:
+            cust_env=[[age, gend, impul, pressure_high, pressure_low, glucose, trop]]
+            pred=model.predict(cust_env)
+            print("Prediction:", pred)
+        else:
+            pred = ["Model not available - deployment in progress"]
+            print("Model not loaded, showing placeholder")
     return render(request, "home.html", {'prediction': pred})
 
 def about(request):
