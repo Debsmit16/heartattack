@@ -2,16 +2,9 @@
   "version": 2,
   "builds": [
     {
-      "src": "HeartAttack_ML/HeartPred/wsgi.py",
+      "src": "api/index.py",
       "use": "@vercel/python",
       "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
-    },
-    {
-      "src": "build_files.sh",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "staticfiles_build/static"
-      }
     }
   ],
   "routes": [
@@ -21,7 +14,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "HeartAttack_ML/HeartPred/wsgi.py"
+      "dest": "api/index.py"
     }
   ]
 }
